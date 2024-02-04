@@ -42,7 +42,7 @@ jobs:
           file: dockerfiles/Dockerfile
           build-args: |
             GDAL_VERSION=${{ env.GDAL_VERSION }}
-          tags: ghcr.io/${{ USERNAME_LOWER }}/lambda-al2023-gdal:${{ env.GDAL_VERSION_TAG }}
+          tags: ghcr.io/${{ env.USERNAME_LOWER }}/lambda-al2023-gdal:${{ env.GDAL_VERSION_TAG }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -52,7 +52,7 @@ jobs:
             --platform=linux/amd64 \
             --entrypoint bash \
             -v ${{ github.workspace }}:/local \
-            --rm ghcr.io/${{ USERNAME_LOWER }}/lambda-al2023-gdal:${{ env.GDAL_VERSION_TAG }} \
+            --rm ghcr.io/${{ env.USERNAME_LOWER }}/lambda-al2023-gdal:${{ env.GDAL_VERSION_TAG }} \
             /local/tests/tests.sh
   deploy:
     needs: [ build ]
@@ -87,4 +87,4 @@ jobs:
             GDAL_VERSION=${{ env.GDAL_VERSION }}
           push: true
           cache-from: type=gha
-          tags: ghcr.io/${{ USERNAME_LOWER }}/lambda-gdal:${{ env.GDAL_VERSION_TAG }}
+          tags: ghcr.io/${{ env.USERNAME_LOWER }}/lambda-al2023-gdal:${{ env.GDAL_VERSION_TAG }}
