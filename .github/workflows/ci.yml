@@ -6,7 +6,7 @@ on:
       - master
 
 env:
-  GDAL_VERSION: 3.8.0
+  GDAL_VERSION: 3.8.3
   GDAL_VERSION_TAG: 3.8
 
 jobs:
