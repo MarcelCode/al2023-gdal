@@ -98,7 +98,7 @@ jobs:
           context: .
           file: dockerfiles/runtimes/go.Dockerfile
           build-args: |
-            GDAL_VERSION=${{ env.GDAL_VERSION }}
+            GDAL_VERSION=${{ env.GDAL_VERSION_TAG }}
             GO_VERSION=${{ env.GO_VERSION }}
           push: true
           cache-from: type=gha
