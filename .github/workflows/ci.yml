@@ -8,6 +8,8 @@ on:
 env:
   GDAL_VERSION: 3.8.3
   GDAL_VERSION_TAG: 3.8
+  GO_VERSION: 1.21.6
+  GO_VERSION_TAG: 1.21
 
 jobs:
   build:
@@ -77,7 +79,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Publish docker image
+      - name: Publish gdal docker image
         uses: docker/build-push-action@v5
         with:
           platforms: linux/amd64
@@ -88,3 +90,17 @@ jobs:
           push: true
           cache-from: type=gha
           tags: ghcr.io/${{ env.USERNAME_LOWER }}/lambda-al2023-gdal:${{ env.GDAL_VERSION_TAG }}
+
+      - name: Publish gdal docker image for GO build
+        uses: docker/build-push-action@v5
+        with:
+          platforms: linux/amd64
+          context: .
+          file: dockerfiles/runtimes/go.Dockerfile
+          build-args: |
+            GDAL_VERSION=${{ env.GDAL_VERSION }}
+            GO_VERSION=${{ env.GO_VERSION }}
+          push: true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          tags: ghcr.io/${{ env.USERNAME_LOWER }}/lambda-al2023-gdal:${{ env.GDAL_VERSION_TAG }}-go${{ env.GO_VERSION_TAG }}

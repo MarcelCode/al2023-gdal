@@ -1,5 +1,6 @@
 ARG GDAL_VERSION
-FROM lambda-al2023-gdal:${GDAL_VERSION} as builder
+ARG GO_VERSION
+FROM ghcr.io/marcelcode/lambda-al2023-gdal:${GDAL_VERSION} as builder
 
 RUN dnf update -y && \
     dnf install -y tar zip gzip curl-devel && \
@@ -8,10 +9,11 @@ RUN dnf update -y && \
 
 RUN mkdir /tmp/go \
     && cd /tmp/go \
-    && curl -L https://go.dev/dl/go1.21.6.linux-amd64.tar.gz | tar -zx -C /usr/local \
+    && curl -L https://go.dev/dl/go${GO_VERSION}.linux-amd64.tar.gz | tar -zx -C /usr/local \
     && rm -rf /tmp/go
 
-FROM lambda-gdal:latest
+ARG GDAL_VERSION
+FROM ghcr.io/marcelcode/lambda-al2023-gdal:${GDAL_VERSION}
 
 COPY --from=builder /usr/local/go /usr/local/go
 
