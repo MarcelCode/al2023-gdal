@@ -42,7 +42,7 @@ jobs:
           file: dockerfiles/Dockerfile
           build-args: |
             GDAL_VERSION=${{ env.GDAL_VERSION }}
-          tags: ghcr.io/${{USERNAME_LOWER}}/lambda-al2023-gdal:${{ env.GDAL_VERSION_TAG }}
+          tags: ghcr.io/${{ USERNAME_LOWER }}/lambda-al2023-gdal:${{ env.GDAL_VERSION_TAG }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -52,5 +52,39 @@ jobs:
             --platform=linux/amd64 \
             --entrypoint bash \
             -v ${{ github.workspace }}:/local \
-            --rm ghcr.io/${{USERNAME_LOWER}}/lambda-al2023-gdal:${{ env.GDAL_VERSION_TAG }} \
+            --rm ghcr.io/${{ USERNAME_LOWER }}/lambda-al2023-gdal:${{ env.GDAL_VERSION_TAG }} \
             /local/tests/tests.sh
+  deploy:
+    needs: [ build ]
+    permissions: write-all
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set environment variable with lowercase username
+        run: |
+          USERNAME_LOWER=$(echo "${{ github.actor }}" | tr '[:upper:]' '[:lower:]')
+          echo "USERNAME_LOWER=${USERNAME_LOWER}" >> $GITHUB_ENV
+
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish docker image
+        uses: docker/build-push-action@v5
+        with:
+          platforms: linux/amd64
+          context: .
+          file: dockerfiles/Dockerfile
+          build-args: |
+            GDAL_VERSION=${{ env.GDAL_VERSION }}
+          push: true
+          cache-from: type=gha
+          tags: ghcr.io/${{ USERNAME_LOWER }}/lambda-gdal:${{ env.GDAL_VERSION_TAG }}
