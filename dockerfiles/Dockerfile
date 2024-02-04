@@ -124,7 +124,7 @@ RUN export GDAL_VERSION=$(gdal-config --version)
 
 ENV \
   GDAL_DATA=$PREFIX/share/gdal \
-  PROJ_LIB=$PREFIX/share/proj \
+  PROJ_DATA=$PREFIX/share/proj \
   GDAL_CONFIG=$PREFIX/bin/gdal-config \
   PATH=$PREFIX/bin:$PATH
 
