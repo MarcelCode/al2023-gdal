@@ -112,6 +112,6 @@ jobs:
             --platform=linux/amd64 \
             --entrypoint bash \
             -v ${{ github.workspace }}:/local \
-            --rm ghcr.io/${{ github.repository_owner }}/al2023-gdal:${{ env.GDAL_VERSION_TAG }} \
+            --rm ghcr.io/${{ env.USERNAME_LOWER }}/al2023-gdal:${{ env.GDAL_VERSION_TAG }} \
             /local/scripts/create-layer.sh
           python scripts/deploy.py ${{ env.GDAL_VERSION_TAG }}
