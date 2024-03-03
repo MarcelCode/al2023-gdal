@@ -4,9 +4,17 @@ version = "0.1.0"
 description = "Deploy docker container for aws lambda gdal"
 authors = ["Marcel <siegmann@eomap.de>"]
 readme = "README.md"
+packages = [
+    { include = "scripts" }
+]
 
 [tool.poetry.dependencies]
 python = "^3.10"
+boto3 = "^1.34.54"
+click = "^8.1.7"
+
+[tool.poetry.scripts]
+deploy-layer = "scripts.deploy-layer:main"
 
 [build-system]
 requires = ["poetry-core"]

@@ -25,11 +25,8 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v4
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@v3
+        uses: docker/setup-buildx-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -69,15 +66,19 @@ jobs:
       - name: Checkout Repo
         uses: actions/checkout@v4
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-central-1
 
       - name: Publish gdal docker image
         uses: docker/build-push-action@v5
@@ -91,16 +92,27 @@ jobs:
           cache-from: type=gha
           tags: ghcr.io/${{ env.USERNAME_LOWER }}/al2023-gdal:${{ env.GDAL_VERSION_TAG }}
 
-#      - name: Publish gdal docker image for GO build
-#        uses: docker/build-push-action@v5
-#        with:
-#          platforms: linux/amd64
-#          context: .
-#          file: dockerfiles/runtimes/go.Dockerfile
-#          build-args: |
-#            GDAL_VERSION=${{ env.GDAL_VERSION_TAG }}
-#            GO_VERSION=${{ env.GO_VERSION }}
-#          push: true
-#          cache-from: type=gha
-#          cache-to: type=gha,mode=max
-#          tags: ghcr.io/${{ env.USERNAME_LOWER }}/al2023-gdal:${{ env.GDAL_VERSION_TAG }}-go${{ env.GO_VERSION_TAG }}
+      - name: Publish gdal docker image for GO build
+        uses: docker/build-push-action@v5
+        with:
+          platforms: linux/amd64
+          context: .
+          file: dockerfiles/runtimes/go.Dockerfile
+          build-args: |
+            GDAL_VERSION=${{ env.GDAL_VERSION_TAG }}
+            GO_VERSION=${{ env.GO_VERSION }}
+          push: true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          tags: ghcr.io/${{ env.USERNAME_LOWER }}/al2023-gdal-go:${{ env.GDAL_VERSION_TAG }}-${{ env.GO_VERSION_TAG }}
+
+      - name: Build and Deploy layers
+        run: |
+          python -m pip install boto3 click
+          docker run \
+            --platform=linux/amd64 \
+            --entrypoint bash \
+            -v ${{ github.workspace }}:/local \
+            --rm ghcr.io/${{ github.repository_owner }}/al2023-gdal:${{ env.GDAL_VERSION_TAG }} \
+            /local/scripts/create-layer.sh
+          python scripts/deploy.py ${{ env.GDAL_VERSION_TAG }}
