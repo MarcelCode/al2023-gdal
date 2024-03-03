@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/lambda-gdal.iml" filepath="$PROJECT_DIR$/.idea/lambda-gdal.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/al2023-gdal.iml" filepath="$PROJECT_DIR$/.idea/al2023-gdal.iml" />
     </modules>
   </component>
 </project>
