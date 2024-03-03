@@ -103,7 +103,6 @@ jobs:
             GO_VERSION=${{ env.GO_VERSION }}
           push: true
           cache-from: type=gha
-          cache-to: type=gha,mode=max
           tags: ghcr.io/${{ env.USERNAME_LOWER }}/al2023-gdal-go:${{ env.GDAL_VERSION_TAG }}-${{ env.GO_VERSION_TAG }}
 
       - name: Build and Deploy layers
