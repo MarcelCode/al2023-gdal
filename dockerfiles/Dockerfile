@@ -112,9 +112,10 @@ RUN mkdir /tmp/gdal \
   && make -j $(nproc) --silent && make install \
   && rm -rf /tmp/gdal
 
-FROM public.ecr.aws/lambda/provided:al2023 as runner
+FROM public.ecr.aws/sam/build-provided.al2023:latest as runner
 
 ENV PREFIX=/opt
+
 COPY --from=builder /opt/lib/ $PREFIX/lib/
 COPY --from=builder /opt/include/ $PREFIX/include/
 COPY --from=builder /opt/share/ $PREFIX/share/
@@ -124,8 +125,8 @@ RUN export GDAL_VERSION=$(gdal-config --version)
 
 ENV \
   GDAL_DATA=$PREFIX/share/gdal \
+  PROJ_LIB=$PREFIX/share/proj \
   PROJ_DATA=$PREFIX/share/proj \
   GDAL_CONFIG=$PREFIX/bin/gdal-config \
-  PATH=$PREFIX/bin:$PATH
-
-ENTRYPOINT bash
+  PATH=$PREFIX/bin:$PATH \
+  LD_PRELOAD=$PREFIX/lib/libsqlite3.so

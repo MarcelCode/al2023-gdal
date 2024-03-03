@@ -6,10 +6,10 @@ on:
       - master
 
 env:
-  GDAL_VERSION: 3.8.3
+  GDAL_VERSION: 3.8.4
   GDAL_VERSION_TAG: 3.8
-  GO_VERSION: 1.21.6
-  GO_VERSION_TAG: 1.21
+  GO_VERSION: 1.22.0
+  GO_VERSION_TAG: 1.22
 
 jobs:
   build:
@@ -44,7 +44,7 @@ jobs:
           file: dockerfiles/Dockerfile
           build-args: |
             GDAL_VERSION=${{ env.GDAL_VERSION }}
-          tags: ghcr.io/${{ env.USERNAME_LOWER }}/lambda-al2023-gdal:${{ env.GDAL_VERSION_TAG }}
+          tags: ghcr.io/${{ env.USERNAME_LOWER }}/al2023-gdal:${{ env.GDAL_VERSION_TAG }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
@@ -54,7 +54,7 @@ jobs:
             --platform=linux/amd64 \
             --entrypoint bash \
             -v ${{ github.workspace }}:/local \
-            --rm ghcr.io/${{ env.USERNAME_LOWER }}/lambda-al2023-gdal:${{ env.GDAL_VERSION_TAG }} \
+            --rm ghcr.io/${{ env.USERNAME_LOWER }}/al2023-gdal:${{ env.GDAL_VERSION_TAG }} \
             /local/tests/tests.sh
   deploy:
     needs: [ build ]
@@ -89,18 +89,18 @@ jobs:
             GDAL_VERSION=${{ env.GDAL_VERSION }}
           push: true
           cache-from: type=gha
-          tags: ghcr.io/${{ env.USERNAME_LOWER }}/lambda-al2023-gdal:${{ env.GDAL_VERSION_TAG }}
+          tags: ghcr.io/${{ env.USERNAME_LOWER }}/al2023-gdal:${{ env.GDAL_VERSION_TAG }}
 
-      - name: Publish gdal docker image for GO build
-        uses: docker/build-push-action@v5
-        with:
-          platforms: linux/amd64
-          context: .
-          file: dockerfiles/runtimes/go.Dockerfile
-          build-args: |
-            GDAL_VERSION=${{ env.GDAL_VERSION_TAG }}
-            GO_VERSION=${{ env.GO_VERSION }}
-          push: true
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-          tags: ghcr.io/${{ env.USERNAME_LOWER }}/lambda-al2023-gdal:${{ env.GDAL_VERSION_TAG }}-go${{ env.GO_VERSION_TAG }}
+#      - name: Publish gdal docker image for GO build
+#        uses: docker/build-push-action@v5
+#        with:
+#          platforms: linux/amd64
+#          context: .
+#          file: dockerfiles/runtimes/go.Dockerfile
+#          build-args: |
+#            GDAL_VERSION=${{ env.GDAL_VERSION_TAG }}
+#            GO_VERSION=${{ env.GO_VERSION }}
+#          push: true
+#          cache-from: type=gha
+#          cache-to: type=gha,mode=max
+#          tags: ghcr.io/${{ env.USERNAME_LOWER }}/al2023-gdal:${{ env.GDAL_VERSION_TAG }}-go${{ env.GO_VERSION_TAG }}

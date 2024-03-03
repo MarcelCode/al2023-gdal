@@ -1,5 +1,5 @@
 ARG GDAL_VERSION
-FROM ghcr.io/marcelcode/lambda-al2023-gdal:${GDAL_VERSION} as builder
+FROM ghcr.io/marcelcode/al2023-gdal:${GDAL_VERSION} as builder
 
 RUN dnf update -y && \
     dnf install -y tar zip gzip curl-devel && \
