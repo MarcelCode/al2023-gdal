@@ -9,7 +9,7 @@ if [[ ! "$(gdal-config --formats | grep 'GTIFF')" ]]; then echo "GTIFF NOK" && e
 echo "OK"
 
 echo "Checking sqlite build"
-if [[ ! "$(ldd $PREFIX/bin/gdalwarp | grep '/lib64/libsqlite3')" ]]; then echo "libsql NOK" && exit 1; fi
+if [[ ! "$(ldd $PREFIX/bin/gdalwarp | grep $PREFIX/lib/libsqlite3)" ]]; then echo "libsql NOK" && exit 1; fi
 echo "OK"
 
 echo "Checking OGR"
