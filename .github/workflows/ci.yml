@@ -114,4 +114,4 @@ jobs:
             -v ${{ github.workspace }}:/local \
             --rm ghcr.io/${{ env.USERNAME_LOWER }}/al2023-gdal:${{ env.GDAL_VERSION_TAG }} \
             /local/scripts/create-layer.sh
-          python scripts/deploy.py ${{ env.GDAL_VERSION_TAG }}
+          python scripts/deploy-layer.py ${{ env.GDAL_VERSION_TAG }}
