@@ -15,7 +15,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
     permissions: write-all
-    if: "!contains(github.event.head_commit.message, '[skip ci]')"
     steps:
       - name: Set environment variable with lowercase username
         run: |
@@ -31,6 +30,13 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-central-1
 
       - name: Build Gdal AL2023 Docker
         uses: docker/build-push-action@v5
@@ -53,32 +59,6 @@ jobs:
             -v ${{ github.workspace }}:/local \
             --rm ghcr.io/${{ env.USERNAME_LOWER }}/al2023-gdal:${{ env.GDAL_VERSION_TAG }} \
             /local/tests/tests.sh
-  deploy:
-    needs: [ build ]
-    permissions: write-all
-    runs-on: ubuntu-latest
-    steps:
-      - name: Set environment variable with lowercase username
-        run: |
-          USERNAME_LOWER=$(echo "${{ github.actor }}" | tr '[:upper:]' '[:lower:]')
-          echo "USERNAME_LOWER=${USERNAME_LOWER}" >> $GITHUB_ENV
-
-      - name: Checkout Repo
-        uses: actions/checkout@v4
-
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: eu-central-1
 
       - name: Publish gdal docker image
         uses: docker/build-push-action@v5
@@ -90,6 +70,7 @@ jobs:
             GDAL_VERSION=${{ env.GDAL_VERSION }}
           push: true
           cache-from: type=gha
+          cache-to: type=gha,mode=max
           tags: ghcr.io/${{ env.USERNAME_LOWER }}/al2023-gdal:${{ env.GDAL_VERSION_TAG }}
 
       - name: Publish gdal docker image for GO build
@@ -103,6 +84,7 @@ jobs:
             GO_VERSION=${{ env.GO_VERSION }}
           push: true
           cache-from: type=gha
+          cache-to: type=gha,mode=max
           tags: ghcr.io/${{ env.USERNAME_LOWER }}/al2023-gdal-go:${{ env.GDAL_VERSION_TAG }}-${{ env.GO_VERSION_TAG }}
 
       - name: Build and Deploy layers
