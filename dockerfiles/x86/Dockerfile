@@ -37,6 +37,14 @@ RUN mkdir /tmp/sqlite \
   && make -j $(nproc) --silent && make install && make clean \
   && rm -rf /tmp/sqlite
 
+# libdeflate
+ENV LIBDEFLATE_VERSION=1.14
+RUN mkdir /tmp/libdeflate \
+  && curl -sfL https://github.com/ebiggers/libdeflate/archive/v${LIBDEFLATE_VERSION}.tar.gz | tar zxf - -C /tmp/libdeflate --strip-components=1 \
+  && cd /tmp/libdeflate \
+  && make -j $(nproc) --silent PREFIX=$PREFIX && make install \
+  && rm -rf /tmp/libdeflate
+
 # libtiff
 ENV LIBTIFF_VERSION=4.6.0
 RUN mkdir /tmp/libtiff \
@@ -46,17 +54,10 @@ RUN mkdir /tmp/libtiff \
     --prefix=$PREFIX \
     --disable-static \
     --enable-rpath \
+    --with-libdeflate-lib-dir=$PREFIX/lib \
+    --with-libdeflate-include-dir=$PREFIX/include \
   && make -j $(nproc) --silent && make install \
   && rm -rf /tmp/libtiff
-
-# libpng
-ENV LIBPNG_VERSION=1.6.41
-RUN mkdir /tmp/png \
-  && curl -sfL https://github.com/glennrp/libpng/archive/v${LIBPNG_VERSION}.tar.gz | tar zxf - -C /tmp/png --strip-components=1 \
-  && cd /tmp/png \
-  && CFLAGS="-O2 -Wl,-S" CXXFLAGS="-O2 -Wl,-S" ./configure --prefix=$PREFIX \
-  && make -j $(nproc) --silent && make install \
-  && rm -rf /tmp/png
 
 # Proj
 ENV PROJ_VERSION=9.3.1
@@ -74,6 +75,20 @@ RUN mkdir /tmp/proj && mkdir /tmp/proj/data \
     -DCMAKE_CXX_FLAGS="-O2 -Wl,-S" \
   && make -j $(nproc) --silent && make install \
   && rm -rf /tmp/proj
+
+# GeoTIFF
+ENV LIBGEOTIFF_VERSION=1.7.1
+RUN mkdir /tmp/libgeotiff \
+  && curl -sfL https://github.com/OSGeo/libgeotiff/releases/download/${LIBGEOTIFF_VERSION}/libgeotiff-${LIBGEOTIFF_VERSION}.tar.gz | tar zxf - -C /tmp/libgeotiff --strip-components=1 \
+  && cd /tmp/libgeotiff \
+  && LDFLAGS="-Wl,-rpath,'\$\$ORIGIN'" CFLAGS="-O2 -Wl,-S" CXXFLAGS="-O2 -Wl,-S" ./configure \
+    --prefix=$PREFIX \
+    --with-proj=$PREFIX \
+    --with-zip=yes \
+    --with-zlib \
+    --with-libtiff=$PREFIX \
+  && make -j $(nproc) --silent && make install \
+  && rm -rf /tmp/libgeotiff
 
 # geos
 ENV GEOS_VERSION=3.12.1
@@ -109,6 +124,8 @@ RUN mkdir /tmp/gdal \
     -DCMAKE_CXX_FLAGS="-O2 -Wl,-S" \
     -DGDAL_SET_INSTALL_RELATIVE_RPATH=ON \
     -DBUILD_PYTHON_BINDINGS=OFF \
+    -DGDAL_USE_TIFF_INTERNAL=OFF \
+    -DGDAL_USE_GEOTIFF_INTERNAL=OFF \
   && make -j $(nproc) --silent && make install \
   && rm -rf /tmp/gdal
 

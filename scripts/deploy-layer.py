@@ -9,7 +9,7 @@ AWS_REGIONS = [
     "us-west-2",
 ]
 
-CompatibleRuntimes_al2 = [
+CompatibleRuntimes = [
     "provided.al2023",
 ]
 
@@ -37,7 +37,7 @@ def main(gdal_version):
             res = client.publish_layer_version(
                 LayerName=layer_name,
                 Content={"ZipFile": zf.read()},
-                CompatibleRuntimes=CompatibleRuntimes_al2,
+                CompatibleRuntimes=CompatibleRuntimes,
                 CompatibleArchitectures=["x86_64"],
                 Description=description,
                 LicenseInfo="MIT"
