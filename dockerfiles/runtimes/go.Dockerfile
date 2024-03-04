@@ -8,5 +8,6 @@ RUN mkdir /tmp/go \
     && rm -rf /tmp/go
 
 RUN mkdir -m 777 -p /.cache/go-build
+RUN mkdir -m 777 -p /go
 
 ENV PATH=$PATH:/usr/local/go/bin:/root/go/bin
