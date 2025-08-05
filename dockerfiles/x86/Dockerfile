@@ -28,8 +28,8 @@ RUN mkdir /tmp/pkg-config \
 ENV PKG_CONFIG_PATH=$PREFIX/lib/pkgconfig/
 
 # sqlite
-ENV SQLITE_VERSION_YEAR=2024
-ENV SQLITE_VERSION=3450100
+ENV SQLITE_VERSION_YEAR=2025
+ENV SQLITE_VERSION=3500400
 RUN mkdir /tmp/sqlite \
   && curl -sfL https://www.sqlite.org/${SQLITE_VERSION_YEAR}/sqlite-autoconf-${SQLITE_VERSION}.tar.gz | tar zxf - -C /tmp/sqlite --strip-components=1 \
   && cd /tmp/sqlite \
@@ -38,7 +38,7 @@ RUN mkdir /tmp/sqlite \
   && rm -rf /tmp/sqlite
 
 # libdeflate
-ENV LIBDEFLATE_VERSION=1.14
+ENV LIBDEFLATE_VERSION=1.24
 RUN mkdir /tmp/libdeflate \
   && curl -sfL https://github.com/ebiggers/libdeflate/archive/v${LIBDEFLATE_VERSION}.tar.gz | tar zxf - -C /tmp/libdeflate --strip-components=1 \
   && cd /tmp/libdeflate \
@@ -46,7 +46,7 @@ RUN mkdir /tmp/libdeflate \
   && rm -rf /tmp/libdeflate
 
 # libtiff
-ENV LIBTIFF_VERSION=4.6.0
+ENV LIBTIFF_VERSION=4.7.0
 RUN mkdir /tmp/libtiff \
   && curl -sfL https://download.osgeo.org/libtiff/tiff-${LIBTIFF_VERSION}.tar.gz | tar zxf - -C /tmp/libtiff --strip-components=1 \
   && cd /tmp/libtiff \
@@ -60,7 +60,7 @@ RUN mkdir /tmp/libtiff \
   && rm -rf /tmp/libtiff
 
 # Proj
-ENV PROJ_VERSION=9.3.1
+ENV PROJ_VERSION=9.6.0
 RUN mkdir /tmp/proj && mkdir /tmp/proj/data \
   && curl -sfL https://github.com/OSGeo/proj/archive/${PROJ_VERSION}.tar.gz | tar zxf - -C /tmp/proj --strip-components=1 \
   && cd /tmp/proj \
@@ -77,7 +77,7 @@ RUN mkdir /tmp/proj && mkdir /tmp/proj/data \
   && rm -rf /tmp/proj
 
 # GeoTIFF
-ENV LIBGEOTIFF_VERSION=1.7.1
+ENV LIBGEOTIFF_VERSION=1.7.3
 RUN mkdir /tmp/libgeotiff \
   && curl -sfL https://github.com/OSGeo/libgeotiff/releases/download/${LIBGEOTIFF_VERSION}/libgeotiff-${LIBGEOTIFF_VERSION}.tar.gz | tar zxf - -C /tmp/libgeotiff --strip-components=1 \
   && cd /tmp/libgeotiff \
@@ -91,7 +91,7 @@ RUN mkdir /tmp/libgeotiff \
   && rm -rf /tmp/libgeotiff
 
 # geos
-ENV GEOS_VERSION=3.12.1
+ENV GEOS_VERSION=3.13.1
 RUN mkdir /tmp/geos \
   && curl -sfL https://github.com/libgeos/geos/archive/refs/tags/${GEOS_VERSION}.tar.gz | tar zxf - -C /tmp/geos --strip-components=1 \
   && cd /tmp/geos \
