@@ -1,4 +1,4 @@
-FROM public.ecr.aws/sam/build-provided.al2023:latest as builder
+FROM public.ecr.aws/sam/build-provided.al2023:latest AS builder
 
 LABEL author="Marcel Siegmann <siegmann@eomap.de>"
 
@@ -38,7 +38,7 @@ RUN mkdir /tmp/sqlite \
   && rm -rf /tmp/sqlite
 
 # libdeflate
-ENV LIBDEFLATE_VERSION=1.24
+ENV LIBDEFLATE_VERSION=1.14
 RUN mkdir /tmp/libdeflate \
   && curl -sfL https://github.com/ebiggers/libdeflate/archive/v${LIBDEFLATE_VERSION}.tar.gz | tar zxf - -C /tmp/libdeflate --strip-components=1 \
   && cd /tmp/libdeflate \
@@ -129,7 +129,7 @@ RUN mkdir /tmp/gdal \
   && make -j $(nproc) --silent && make install \
   && rm -rf /tmp/gdal
 
-FROM public.ecr.aws/sam/build-provided.al2023:latest as runner
+FROM public.ecr.aws/sam/build-provided.al2023:latest AS runner
 
 ENV PREFIX=/opt
 
