@@ -6,7 +6,7 @@ echo Running tests for GDAL ${version}
 echo "Checking formats"
 if [[ ! "$(gdal-config --prefix | grep $PREFIX)" ]]; then echo "NOK" && exit 1; fi
 if [[ ! "$(gdal-config --formats | grep 'GTIFF')" ]]; then echo "GTIFF NOK" && exit 1; fi
-if [[ ! "$(gdal-config --formats | grep 'geojson')" ]]; then echo "GeoJson NOK" && exit 1; fi
+if [[ ! "$(gdal-config --formats | grep 'GeoJSON')" ]]; then echo "GeoJson NOK" && exit 1; fi
 echo "OK"
 
 echo "Checking sqlite build"
