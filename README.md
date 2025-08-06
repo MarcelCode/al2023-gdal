@@ -82,10 +82,6 @@ This project uses GitHub Actions for continuous integration and deployment. The 
 3. Publishes the image to GitHub Container Registry
 4. Creates and deploys AWS Lambda layers
 
-## License
-
-[Specify your license here]
-
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
